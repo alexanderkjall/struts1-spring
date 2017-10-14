@@ -1,0 +1,17 @@
+#general ignore rules
+.idea/
+**/*.iml
+**/*.ipr
+**/*.iws
+**/*~
+**/target/*
+**/commands.pyc
+target
+*.iml
+*.pyc
+**/.DS_Store
+**/.flattened-pom.xml
+.DS_Store
+dependency-reduced-pom.xml
+jdbc.properties
+.vagrant/
