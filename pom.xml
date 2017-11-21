@@ -9,10 +9,12 @@
     <name>Struts1 Spring</name>
     <description>Struts1 Spring Integration</description>
     <url>https://github.com/alexanderkjall/struts1-spring</url>
+
     <organization>
         <name>Hackeriet</name>
         <url>https://hackeriet.no/</url>
     </organization>
+
     <licenses>
         <license>
             <name>The Apache Software License, Version 2.0</name>
@@ -20,6 +22,7 @@
             <distribution>repo</distribution>
         </license>
     </licenses>
+
     <developers>
         <developer>
             <id>capitol</id>
@@ -32,11 +35,13 @@
             <email>jhoeller@gopivotal.com</email>
         </developer>
     </developers>
+
     <scm>
         <connection>scm:git:git://github.com/alexanderkjall/struts1-spring</connection>
         <developerConnection>scm:git:git://github.com/alexanderkjall/struts1-spring</developerConnection>
         <url>https://github.com/alexanderkjall/struts1-spring</url>
     </scm>
+
     <dependencies>
         <dependency>
             <groupId>commons-beanutils</groupId>
@@ -123,6 +128,21 @@
                     <target>1.8</target>
                     <encoding>UTF-8</encoding>
                 </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-gpg-plugin</artifactId>
+                <version>1.6</version>
+                <executions>
+                    <execution>
+                        <id>sign-artifacts</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>sign</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
