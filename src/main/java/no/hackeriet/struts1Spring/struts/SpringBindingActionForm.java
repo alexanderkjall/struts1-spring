@@ -58,7 +58,7 @@ import java.util.Locale;
  *
  * <pre>
  * &lt;form-beans&gt;
- *   &lt;form-bean name="actionForm" type="org.springframework.web.struts.SpringBindingActionForm"/&gt;
+ *   &lt;form-bean name="actionForm" type="no.hackeriet.struts1Spring.struts.SpringBindingActionForm"/&gt;
  * &lt;/form-beans&gt;</pre>
  *
  * Example code in a custom Struts {@code Action}:

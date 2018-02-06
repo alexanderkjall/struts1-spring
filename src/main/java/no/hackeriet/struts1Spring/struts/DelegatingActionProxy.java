@@ -33,7 +33,7 @@ import javax.servlet.http.HttpServletResponse;
  * class as the action class. This class will delegate to a Struts
  * {@code Action} bean in the {@code ContextLoaderPlugIn} context.
  *
- * <pre class="code">&lt;action path="/login" type="org.springframework.web.struts.DelegatingActionProxy"/&gt;</pre>
+ * <pre class="code">&lt;action path="/login" type="no.hackeriet.struts1Spring.struts.DelegatingActionProxy"/&gt;</pre>
  *
  * The name of the {@code Action} bean in the
  * {@code WebApplicationContext} will be determined from the mapping

@@ -48,14 +48,14 @@ import javax.servlet.ServletException;
  * is therefore "/WEB-INF/action-servlet.xml".
  *
  * <pre>
- * &lt;plug-in className="org.springframework.web.struts.ContextLoaderPlugIn"/&gt;</pre>
+ * &lt;plug-in className="no.hackeriet.struts1Spring.struts.ContextLoaderPlugIn"/&gt;</pre>
  *
  * The location of the context configuration files can be customized
  * through the "contextConfigLocation" setting, analogous to the root
  * WebApplicationContext and FrameworkServlet contexts.
  *
  * <pre>
- * &lt;plug-in className="org.springframework.web.struts.ContextLoaderPlugIn"&gt;
+ * &lt;plug-in className="no.hackeriet.struts1Spring.struts.ContextLoaderPlugIn"&gt;
  *   &lt;set-property property="contextConfigLocation" value="/WEB-INF/action-servlet.xml /WEB-INF/myContext.xml"/&gt;
  * &lt;/plug-in&gt;</pre>
  *
