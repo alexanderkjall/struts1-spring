@@ -48,118 +48,126 @@ import java.io.IOException;
  * delegating to DelegatingActionUtils just like it.
  *
  * @author Juergen Hoeller
- * @since 2.0
  * @see AutowiringRequestProcessor
  * @see ContextLoaderPlugIn
  * @see DelegatingActionUtils
+ * @since 2.0
  */
 public class AutowiringTilesRequestProcessor extends TilesRequestProcessor {
 
-	private WebApplicationContext webApplicationContext;
+    private WebApplicationContext webApplicationContext;
 
-	private int autowireMode = AutowireCapableBeanFactory.AUTOWIRE_NO;
+    private int autowireMode = AutowireCapableBeanFactory.AUTOWIRE_NO;
 
-	private boolean dependencyCheck = false;
-
-
-	@Override
-	public void init(ActionServlet actionServlet, ModuleConfig moduleConfig) throws ServletException {
-		super.init(actionServlet, moduleConfig);
-		if (actionServlet != null) {
-			this.webApplicationContext = initWebApplicationContext(actionServlet, moduleConfig);
-			this.autowireMode = initAutowireMode(actionServlet, moduleConfig);
-			this.dependencyCheck = initDependencyCheck(actionServlet, moduleConfig);
-		}
-	}
-
-	/**
-	 * Fetch ContextLoaderPlugIn's WebApplicationContext from the ServletContext,
-	 * falling back to the root WebApplicationContext. This context is supposed
-	 * to contain the service layer beans to wire the Struts Actions with.
-	 * @param actionServlet the associated ActionServlet
-	 * @param moduleConfig the associated ModuleConfig
-	 * @return the WebApplicationContext
-	 * @throws IllegalStateException if no WebApplicationContext could be found
-	 * @see DelegatingActionUtils#findRequiredWebApplicationContext
-	 * @see ContextLoaderPlugIn#SERVLET_CONTEXT_PREFIX
-	 */
-	protected WebApplicationContext initWebApplicationContext(
-			ActionServlet actionServlet, ModuleConfig moduleConfig) throws IllegalStateException {
-
-		WebApplicationContext wac =
-				DelegatingActionUtils.findRequiredWebApplicationContext(actionServlet, moduleConfig);
-		if (wac instanceof ConfigurableApplicationContext) {
-			((ConfigurableApplicationContext) wac).getBeanFactory().ignoreDependencyType(ActionServlet.class);
-		}
-		return wac;
-	}
-
-	/**
-	 * Determine the autowire mode to use for wiring Struts Actions.
-	 * <p>The default implementation checks the "autowire" init-param of the
-	 * Struts ActionServlet, falling back to "AUTOWIRE_BY_TYPE" as default.
-	 * @param actionServlet the associated ActionServlet
-	 * @param moduleConfig the associated ModuleConfig
-	 * @return the autowire mode to use
-	 * @see DelegatingActionUtils#getAutowireMode
-	 * @see org.springframework.beans.factory.config.AutowireCapableBeanFactory#autowireBeanProperties
-	 * @see org.springframework.beans.factory.config.AutowireCapableBeanFactory#AUTOWIRE_BY_TYPE
-	 * @see org.springframework.beans.factory.config.AutowireCapableBeanFactory#AUTOWIRE_BY_NAME
-	 */
-	protected int initAutowireMode(ActionServlet actionServlet, ModuleConfig moduleConfig) {
-		return DelegatingActionUtils.getAutowireMode(actionServlet);
-	}
-
-	/**
-	 * Determine whether to apply a dependency check after wiring Struts Actions.
-	 * <p>The default implementation checks the "dependencyCheck" init-param of the
-	 * Struts ActionServlet, falling back to no dependency check as default.
-	 * @param actionServlet the associated ActionServlet
-	 * @param moduleConfig the associated ModuleConfig
-	 * @return whether to enforce a dependency check or not
-	 * @see DelegatingActionUtils#getDependencyCheck
-	 * @see org.springframework.beans.factory.config.AutowireCapableBeanFactory#autowireBeanProperties
-	 */
-	protected boolean initDependencyCheck(ActionServlet actionServlet, ModuleConfig moduleConfig) {
-		return DelegatingActionUtils.getDependencyCheck(actionServlet);
-	}
+    private boolean dependencyCheck = false;
 
 
-	/**
-	 * Return the current Spring WebApplicationContext.
-	 */
-	protected final WebApplicationContext getWebApplicationContext() {
-		return this.webApplicationContext;
-	}
+    @Override
+    public void init(ActionServlet actionServlet, ModuleConfig moduleConfig) throws ServletException {
+        super.init(actionServlet, moduleConfig);
+        if (actionServlet != null) {
+            this.webApplicationContext = initWebApplicationContext(actionServlet, moduleConfig);
+            this.autowireMode = initAutowireMode(actionServlet, moduleConfig);
+            this.dependencyCheck = initDependencyCheck(actionServlet, moduleConfig);
+        }
+    }
 
-	/**
-	 * Return the autowire mode to use for wiring Struts Actions.
-	 */
-	protected final int getAutowireMode() {
-		return autowireMode;
-	}
+    /**
+     * Fetch ContextLoaderPlugIn's WebApplicationContext from the ServletContext,
+     * falling back to the root WebApplicationContext. This context is supposed
+     * to contain the service layer beans to wire the Struts Actions with.
+     *
+     * @param actionServlet the associated ActionServlet
+     * @param moduleConfig  the associated ModuleConfig
+     * @return the WebApplicationContext
+     * @throws IllegalStateException if no WebApplicationContext could be found
+     * @see DelegatingActionUtils#findRequiredWebApplicationContext
+     * @see ContextLoaderPlugIn#SERVLET_CONTEXT_PREFIX
+     */
+    protected WebApplicationContext initWebApplicationContext(
+            ActionServlet actionServlet, ModuleConfig moduleConfig) throws IllegalStateException {
 
-	/**
-	 * Return whether to apply a dependency check after wiring Struts Actions.
-	 */
-	protected final boolean getDependencyCheck() {
-		return dependencyCheck;
-	}
+        WebApplicationContext wac =
+                DelegatingActionUtils.findRequiredWebApplicationContext(actionServlet, moduleConfig);
+        if (wac instanceof ConfigurableApplicationContext) {
+            ((ConfigurableApplicationContext) wac).getBeanFactory().ignoreDependencyType(ActionServlet.class);
+        }
+        return wac;
+    }
+
+    /**
+     * Determine the autowire mode to use for wiring Struts Actions.
+     * <p>The default implementation checks the "autowire" init-param of the
+     * Struts ActionServlet, falling back to "AUTOWIRE_BY_TYPE" as default.
+     *
+     * @param actionServlet the associated ActionServlet
+     * @param moduleConfig  the associated ModuleConfig
+     * @return the autowire mode to use
+     * @see DelegatingActionUtils#getAutowireMode
+     * @see org.springframework.beans.factory.config.AutowireCapableBeanFactory#autowireBeanProperties
+     * @see org.springframework.beans.factory.config.AutowireCapableBeanFactory#AUTOWIRE_BY_TYPE
+     * @see org.springframework.beans.factory.config.AutowireCapableBeanFactory#AUTOWIRE_BY_NAME
+     */
+    protected int initAutowireMode(ActionServlet actionServlet, ModuleConfig moduleConfig) {
+        return DelegatingActionUtils.getAutowireMode(actionServlet);
+    }
+
+    /**
+     * Determine whether to apply a dependency check after wiring Struts Actions.
+     * <p>The default implementation checks the "dependencyCheck" init-param of the
+     * Struts ActionServlet, falling back to no dependency check as default.
+     *
+     * @param actionServlet the associated ActionServlet
+     * @param moduleConfig  the associated ModuleConfig
+     * @return whether to enforce a dependency check or not
+     * @see DelegatingActionUtils#getDependencyCheck
+     * @see org.springframework.beans.factory.config.AutowireCapableBeanFactory#autowireBeanProperties
+     */
+    protected boolean initDependencyCheck(ActionServlet actionServlet, ModuleConfig moduleConfig) {
+        return DelegatingActionUtils.getDependencyCheck(actionServlet);
+    }
 
 
-	/**
-	 * Extend the base class method to autowire each created Action instance.
-	 * @see org.springframework.beans.factory.config.AutowireCapableBeanFactory#autowireBeanProperties
-	 */
-	@Override
-	protected Action processActionCreate(
-			HttpServletRequest request, HttpServletResponse response, ActionMapping mapping)
-			throws IOException {
+    /**
+     * Return the current Spring WebApplicationContext.
+     * @return returns the current Spring WebApplicationContext.
+     */
+    protected final WebApplicationContext getWebApplicationContext() {
+        return this.webApplicationContext;
+    }
 
-		Action action = super.processActionCreate(request, response, mapping);
-		getWebApplicationContext().getAutowireCapableBeanFactory().autowireBeanProperties(
-				action, getAutowireMode(), getDependencyCheck());
-		return action;
-	}
+    /**
+     * Return the autowire mode to use for wiring Struts Actions.
+     * @return returns the autowire mode to use for wiring Struts Actions.
+     */
+    protected final int getAutowireMode() {
+        return autowireMode;
+    }
+
+    /**
+     * Return whether to apply a dependency check after wiring Struts Actions.
+     * @return returns whether to apply a dependency check after wiring Struts Actions.
+     */
+    protected final boolean getDependencyCheck() {
+        return dependencyCheck;
+    }
+
+
+    /**
+     * Extend the base class method to autowire each created Action instance.
+     *
+     * @see org.springframework.beans.factory.config.AutowireCapableBeanFactory#autowireBeanProperties
+     * @return the created Action instance
+     */
+    @Override
+    protected Action processActionCreate(
+            HttpServletRequest request, HttpServletResponse response, ActionMapping mapping)
+            throws IOException {
+
+        Action action = super.processActionCreate(request, response, mapping);
+        getWebApplicationContext().getAutowireCapableBeanFactory().autowireBeanProperties(
+                action, getAutowireMode(), getDependencyCheck());
+        return action;
+    }
 
 }

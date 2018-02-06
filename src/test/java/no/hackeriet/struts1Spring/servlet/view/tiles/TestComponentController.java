@@ -27,10 +27,10 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class TestComponentController extends ComponentControllerSupport {
 
-	@Override
-	protected void doPerform(ComponentContext componentContext, HttpServletRequest request, HttpServletResponse response) {
-		request.setAttribute("testAttr", "testVal");
-		TilesView.setPath(request, "/WEB-INF/jsp/layout.jsp");
-	}
+    @Override
+    protected void doPerform(ComponentContext componentContext, HttpServletRequest request, HttpServletResponse response) {
+        request.setAttribute("testAttr", "testVal");
+        TilesView.setPath(request, "/WEB-INF/jsp/layout.jsp");
+    }
 
 }

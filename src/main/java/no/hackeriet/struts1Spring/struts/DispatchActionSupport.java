@@ -46,7 +46,6 @@ import java.io.File;
  * {@link DelegatingRequestProcessor DelegatingRequestProcessor}.
  *
  * @author Juergen Hoeller
- * @since 1.0.1
  * @see ContextLoaderPlugIn#SERVLET_CONTEXT_PREFIX
  * @see org.springframework.web.context.WebApplicationContext#ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE
  * @see org.springframework.web.context.ContextLoaderListener
@@ -55,92 +54,100 @@ import java.io.File;
  * @see MappingDispatchActionSupport
  * @see DelegatingActionProxy
  * @see DelegatingRequestProcessor
+ * @since 1.0.1
  */
 public abstract class DispatchActionSupport extends DispatchAction {
 
-	private WebApplicationContext webApplicationContext;
+    private WebApplicationContext webApplicationContext;
 
-	private MessageSourceAccessor messageSourceAccessor;
-
-
-	/**
-	 * Initialize the WebApplicationContext for this Action.
-	 * Invokes onInit after successful initialization of the context.
-	 * @see #initWebApplicationContext
-	 * @see #onInit
-	 */
-	@Override
-	public void setServlet(ActionServlet actionServlet) {
-		super.setServlet(actionServlet);
-		if (actionServlet != null) {
-			this.webApplicationContext = initWebApplicationContext(actionServlet);
-			this.messageSourceAccessor = new MessageSourceAccessor(this.webApplicationContext);
-			onInit();
-		}
-		else {
-			onDestroy();
-		}
-	}
-
-	/**
-	 * Fetch ContextLoaderPlugIn's WebApplicationContext from the ServletContext,
-	 * falling back to the root WebApplicationContext (the usual case).
-	 * @param actionServlet the associated ActionServlet
-	 * @return the WebApplicationContext
-	 * @throws IllegalStateException if no WebApplicationContext could be found
-	 * @see DelegatingActionUtils#findRequiredWebApplicationContext
-	 */
-	protected WebApplicationContext initWebApplicationContext(ActionServlet actionServlet)
-			throws IllegalStateException {
-
-		return DelegatingActionUtils.findRequiredWebApplicationContext(actionServlet, null);
-	}
+    private MessageSourceAccessor messageSourceAccessor;
 
 
-	/**
-	 * Return the current Spring WebApplicationContext.
-	 */
-	protected final WebApplicationContext getWebApplicationContext() {
-		return this.webApplicationContext;
-	}
+    /**
+     * Initialize the WebApplicationContext for this Action.
+     * Invokes onInit after successful initialization of the context.
+     *
+     * @see #initWebApplicationContext
+     * @see #onInit
+     */
+    @Override
+    public void setServlet(ActionServlet actionServlet) {
+        super.setServlet(actionServlet);
+        if (actionServlet != null) {
+            this.webApplicationContext = initWebApplicationContext(actionServlet);
+            this.messageSourceAccessor = new MessageSourceAccessor(this.webApplicationContext);
+            onInit();
+        } else {
+            onDestroy();
+        }
+    }
 
-	/**
-	 * Return a MessageSourceAccessor for the application context
-	 * used by this object, for easy message access.
-	 */
-	protected final MessageSourceAccessor getMessageSourceAccessor() {
-		return this.messageSourceAccessor;
-	}
+    /**
+     * Fetch ContextLoaderPlugIn's WebApplicationContext from the ServletContext,
+     * falling back to the root WebApplicationContext (the usual case).
+     *
+     * @param actionServlet the associated ActionServlet
+     * @return the WebApplicationContext
+     * @throws IllegalStateException if no WebApplicationContext could be found
+     * @see DelegatingActionUtils#findRequiredWebApplicationContext
+     */
+    protected WebApplicationContext initWebApplicationContext(ActionServlet actionServlet)
+            throws IllegalStateException {
 
-	/**
-	 * Return the current ServletContext.
-	 */
-	protected final ServletContext getServletContext() {
-		return this.webApplicationContext.getServletContext();
-	}
-
-	/**
-	 * Return the temporary directory for the current web application,
-	 * as provided by the servlet container.
-	 * @return the File representing the temporary directory
-	 */
-	protected final File getTempDir() {
-		return WebUtils.getTempDir(getServletContext());
-	}
+        return DelegatingActionUtils.findRequiredWebApplicationContext(actionServlet, null);
+    }
 
 
-	/**
-	 * Callback for custom initialization after the context has been set up.
-	 * @see #setServlet
-	 */
-	protected void onInit() {
-	}
+    /**
+     * Return the current Spring WebApplicationContext.
+     * @return the current Spring WebApplicationContext.
+     */
+    protected final WebApplicationContext getWebApplicationContext() {
+        return this.webApplicationContext;
+    }
 
-	/**
-	 * Callback for custom destruction when the ActionServlet shuts down.
-	 * @see #setServlet
-	 */
-	protected void onDestroy() {
-	}
+    /**
+     * Return a MessageSourceAccessor for the application context
+     * used by this object, for easy message access.
+     * @return a MessageSourceAccessor for the application context
+     */
+    protected final MessageSourceAccessor getMessageSourceAccessor() {
+        return this.messageSourceAccessor;
+    }
+
+    /**
+     * Return the current ServletContext.
+     * @return the current ServletContext.
+     */
+    protected final ServletContext getServletContext() {
+        return this.webApplicationContext.getServletContext();
+    }
+
+    /**
+     * Return the temporary directory for the current web application,
+     * as provided by the servlet container.
+     *
+     * @return the File representing the temporary directory
+     */
+    protected final File getTempDir() {
+        return WebUtils.getTempDir(getServletContext());
+    }
+
+
+    /**
+     * Callback for custom initialization after the context has been set up.
+     *
+     * @see #setServlet
+     */
+    protected void onInit() {
+    }
+
+    /**
+     * Callback for custom destruction when the ActionServlet shuts down.
+     *
+     * @see #setServlet
+     */
+    protected void onDestroy() {
+    }
 
 }

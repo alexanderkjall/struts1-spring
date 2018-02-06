@@ -53,8 +53,8 @@ import java.io.IOException;
  *
  * <p>Example:
  * <ul>
- * <li>mapping path "/login" -> bean name "/login"<br>
- * <li>mapping path "/login", module prefix "/mymodule" ->
+ * <li>mapping path "/login" -&gt; bean name "/login"<br>
+ * <li>mapping path "/login", module prefix "/mymodule" -&gt;
  * bean name "/mymodule/login"
  * </ul>
  *
@@ -64,7 +64,7 @@ import java.io.IOException;
  *
  * <pre class="code">
  * &lt;bean name="/login" class="myapp.MyAction"&gt;
- *   &lt;property name="..."&gt;...&lt;/property&gt;
+ * &lt;property name="..."&gt;...&lt;/property&gt;
  * &lt;/bean&gt;</pre>
  *
  * Note that you can use a single {@code ContextLoaderPlugIn} for all
@@ -94,104 +94,109 @@ import java.io.IOException;
  * delegating to {@code DelegatingActionUtils} just like it.
  *
  * @author Juergen Hoeller
- * @since 1.0.2
  * @see #determineActionBeanName
  * @see DelegatingTilesRequestProcessor
  * @see DelegatingActionProxy
  * @see DelegatingActionUtils
  * @see ContextLoaderPlugIn
+ * @since 1.0.2
  */
 public class DelegatingRequestProcessor extends RequestProcessor {
 
-	private WebApplicationContext webApplicationContext;
+    private WebApplicationContext webApplicationContext;
 
 
-	@Override
-	public void init(ActionServlet actionServlet, ModuleConfig moduleConfig) throws ServletException {
-		super.init(actionServlet, moduleConfig);
-		if (actionServlet != null) {
-			this.webApplicationContext = initWebApplicationContext(actionServlet, moduleConfig);
-		}
-	}
+    @Override
+    public void init(ActionServlet actionServlet, ModuleConfig moduleConfig) throws ServletException {
+        super.init(actionServlet, moduleConfig);
+        if (actionServlet != null) {
+            this.webApplicationContext = initWebApplicationContext(actionServlet, moduleConfig);
+        }
+    }
 
-	/**
-	 * Fetch ContextLoaderPlugIn's {@link WebApplicationContext} from the
-	 * {@code ServletContext}, falling back to the root
-	 * {@code WebApplicationContext}.
-	 * <p>This context is supposed to contain the Struts {@code Action}
-	 * beans to delegate to.
-	 * @param actionServlet the associated {@code ActionServlet}
-	 * @param moduleConfig the associated {@code ModuleConfig}
-	 * @return the {@code WebApplicationContext}
-	 * @throws IllegalStateException if no {@code WebApplicationContext} could be found
-	 * @see DelegatingActionUtils#findRequiredWebApplicationContext
-	 * @see ContextLoaderPlugIn#SERVLET_CONTEXT_PREFIX
-	 */
-	protected WebApplicationContext initWebApplicationContext(
-			ActionServlet actionServlet, ModuleConfig moduleConfig) throws IllegalStateException {
+    /**
+     * Fetch ContextLoaderPlugIn's {@link WebApplicationContext} from the
+     * {@code ServletContext}, falling back to the root
+     * {@code WebApplicationContext}.
+     * <p>This context is supposed to contain the Struts {@code Action}
+     * beans to delegate to.
+     *
+     * @param actionServlet the associated {@code ActionServlet}
+     * @param moduleConfig  the associated {@code ModuleConfig}
+     * @return the {@code WebApplicationContext}
+     * @throws IllegalStateException if no {@code WebApplicationContext} could be found
+     * @see DelegatingActionUtils#findRequiredWebApplicationContext
+     * @see ContextLoaderPlugIn#SERVLET_CONTEXT_PREFIX
+     */
+    protected WebApplicationContext initWebApplicationContext(
+            ActionServlet actionServlet, ModuleConfig moduleConfig) throws IllegalStateException {
 
-		return DelegatingActionUtils.findRequiredWebApplicationContext(actionServlet, moduleConfig);
-	}
+        return DelegatingActionUtils.findRequiredWebApplicationContext(actionServlet, moduleConfig);
+    }
 
-	/**
-	 * Return the {@code WebApplicationContext} that this processor
-	 * delegates to.
-	 */
-	protected final WebApplicationContext getWebApplicationContext() {
-		return this.webApplicationContext;
-	}
+    /**
+     * Return the {@code WebApplicationContext} that this processor
+     * delegates to.
+     * @return the WebApplicationContext that this processor delegates to
+     */
+    protected final WebApplicationContext getWebApplicationContext() {
+        return this.webApplicationContext;
+    }
 
 
-	/**
-	 * Override the base class method to return the delegate action.
-	 * @see #getDelegateAction
-	 */
-	@Override
-	protected Action processActionCreate(
-			HttpServletRequest request, HttpServletResponse response, ActionMapping mapping)
-			throws IOException {
+    /**
+     * Override the base class method to return the delegate action.
+     *
+     * @see #getDelegateAction
+     */
+    @Override
+    protected Action processActionCreate(
+            HttpServletRequest request, HttpServletResponse response, ActionMapping mapping)
+            throws IOException {
 
-		Action action = getDelegateAction(mapping);
-		if (action != null) {
-			return action;
-		}
-		return super.processActionCreate(request, response, mapping);
-	}
+        Action action = getDelegateAction(mapping);
+        if (action != null) {
+            return action;
+        }
+        return super.processActionCreate(request, response, mapping);
+    }
 
-	/**
-	 * Return the delegate {@code Action} for the given mapping.
-	 * <p>The default implementation determines a bean name from the
-	 * given {@code ActionMapping} and looks up the corresponding
-	 * bean in the {@code WebApplicationContext}.
-	 * @param mapping the Struts {@code ActionMapping}
-	 * @return the delegate {@code Action}, or {@code null} if none found
-	 * @throws BeansException if thrown by {@code WebApplicationContext} methods
-	 * @see #determineActionBeanName
-	 */
-	protected Action getDelegateAction(ActionMapping mapping) throws BeansException {
-		String beanName = determineActionBeanName(mapping);
-		if (!getWebApplicationContext().containsBean(beanName)) {
-			return null;
-		}
-		return getWebApplicationContext().getBean(beanName, Action.class);
-	}
+    /**
+     * Return the delegate {@code Action} for the given mapping.
+     * <p>The default implementation determines a bean name from the
+     * given {@code ActionMapping} and looks up the corresponding
+     * bean in the {@code WebApplicationContext}.
+     *
+     * @param mapping the Struts {@code ActionMapping}
+     * @return the delegate {@code Action}, or {@code null} if none found
+     * @throws BeansException if thrown by {@code WebApplicationContext} methods
+     * @see #determineActionBeanName
+     */
+    protected Action getDelegateAction(ActionMapping mapping) throws BeansException {
+        String beanName = determineActionBeanName(mapping);
+        if (!getWebApplicationContext().containsBean(beanName)) {
+            return null;
+        }
+        return getWebApplicationContext().getBean(beanName, Action.class);
+    }
 
-	/**
-	 * Determine the name of the {@code Action} bean, to be looked up in
-	 * the {@code WebApplicationContext}.
-	 * <p>The default implementation takes the
-	 * {@link org.apache.struts.action.ActionMapping#getPath mapping path} and
-	 * prepends the
-	 * {@link org.apache.struts.config.ModuleConfig#getPrefix module prefix},
-	 * if any.
-	 * @param mapping the Struts {@code ActionMapping}
-	 * @return the name of the Action bean
-	 * @see DelegatingActionUtils#determineActionBeanName
-	 * @see org.apache.struts.action.ActionMapping#getPath
-	 * @see org.apache.struts.config.ModuleConfig#getPrefix
-	 */
-	protected String determineActionBeanName(ActionMapping mapping) {
-		return DelegatingActionUtils.determineActionBeanName(mapping);
-	}
+    /**
+     * Determine the name of the {@code Action} bean, to be looked up in
+     * the {@code WebApplicationContext}.
+     * <p>The default implementation takes the
+     * {@link org.apache.struts.action.ActionMapping#getPath mapping path} and
+     * prepends the
+     * {@link org.apache.struts.config.ModuleConfig#getPrefix module prefix},
+     * if any.
+     *
+     * @param mapping the Struts {@code ActionMapping}
+     * @return the name of the Action bean
+     * @see DelegatingActionUtils#determineActionBeanName
+     * @see org.apache.struts.action.ActionMapping#getPath
+     * @see org.apache.struts.config.ModuleConfig#getPrefix
+     */
+    protected String determineActionBeanName(ActionMapping mapping) {
+        return DelegatingActionUtils.determineActionBeanName(mapping);
+    }
 
 }

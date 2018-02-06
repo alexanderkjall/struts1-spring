@@ -45,132 +45,142 @@ import java.io.IOException;
  *
  * @author Juergen Hoeller
  * @author Alef Arendsen
- * @since 22.08.2003
  * @see org.springframework.web.context.support.WebApplicationObjectSupport
+ * @since 22.08.2003
  */
 public abstract class ComponentControllerSupport extends ControllerSupport {
 
-	private WebApplicationContext webApplicationContext;
+    private WebApplicationContext webApplicationContext;
 
-	private MessageSourceAccessor messageSourceAccessor;
-
-
-	/**
-	 * This implementation delegates to {@code execute},
-	 * converting non-Servlet/IO Exceptions to ServletException.
-	 * <p>This is the only execution method available in Struts 1.1.
-	 * @see #execute
-	 */
-	@Override
-	public final void perform(
-			ComponentContext componentContext, HttpServletRequest request,
-			HttpServletResponse response, ServletContext servletContext)
-		throws ServletException, IOException {
-
-		try {
-			execute(componentContext, request, response, servletContext);
-		}
-		catch (ServletException ex) {
-			throw ex;
-		}
-		catch (IOException ex) {
-			throw ex;
-		}
-		catch (Throwable ex) {
-			throw new NestedServletException("Execution of component controller failed", ex);
-		}
-	}
-
-	/**
-	 * This implementation delegates to {@code doPerform},
-	 * lazy-initializing the application context reference if necessary.
-	 * <p>This is the preferred execution method in Struts 1.2.
-	 * When running with Struts 1.1, it will be called by {@code perform}.
-	 * @see #perform
-	 * @see #doPerform
-	 */
-	@Override
-	public final void execute(
-			ComponentContext componentContext, HttpServletRequest request,
-			HttpServletResponse response, ServletContext servletContext)
-		throws Exception {
-
-		synchronized (this) {
-			if (this.webApplicationContext == null) {
-				this.webApplicationContext = RequestContextUtils.findWebApplicationContext(request, servletContext);
-				this.messageSourceAccessor = new MessageSourceAccessor(this.webApplicationContext);
-			}
-		}
-		doPerform(componentContext, request, response);
-	}
+    private MessageSourceAccessor messageSourceAccessor;
 
 
-	/**
-	 * Subclasses can override this for custom initialization behavior.
-	 * Gets called on initialization of the context for this controller.
-	 * @throws org.springframework.context.ApplicationContextException in case of initialization errors
-	 * @throws org.springframework.beans.BeansException if thrown by application context methods
-	 */
-	protected void initApplicationContext() throws BeansException {
-	}
+    /**
+     * This implementation delegates to {@code execute},
+     * converting non-Servlet/IO Exceptions to ServletException.
+     * <p>This is the only execution method available in Struts 1.1.
+     *
+     * @see #execute
+     */
+    @Override
+    public final void perform(
+            ComponentContext componentContext, HttpServletRequest request,
+            HttpServletResponse response, ServletContext servletContext)
+            throws ServletException, IOException {
 
-	/**
-	 * Return the current Spring ApplicationContext.
-	 */
-	protected final ApplicationContext getApplicationContext() {
-		return this.webApplicationContext;
-	}
+        try {
+            execute(componentContext, request, response, servletContext);
+        } catch (ServletException ex) {
+            throw ex;
+        } catch (IOException ex) {
+            throw ex;
+        } catch (Throwable ex) {
+            throw new NestedServletException("Execution of component controller failed", ex);
+        }
+    }
 
-	/**
-	 * Return the current Spring WebApplicationContext.
-	 */
-	protected final WebApplicationContext getWebApplicationContext() {
-		return this.webApplicationContext;
-	}
+    /**
+     * This implementation delegates to {@code doPerform},
+     * lazy-initializing the application context reference if necessary.
+     * <p>This is the preferred execution method in Struts 1.2.
+     * When running with Struts 1.1, it will be called by {@code perform}.
+     *
+     * @see #perform
+     * @see #doPerform
+     */
+    @Override
+    public final void execute(
+            ComponentContext componentContext, HttpServletRequest request,
+            HttpServletResponse response, ServletContext servletContext)
+            throws Exception {
 
-	/**
-	 * Return a MessageSourceAccessor for the application context
-	 * used by this object, for easy message access.
-	 */
-	protected final MessageSourceAccessor getMessageSourceAccessor() {
-		return this.messageSourceAccessor;
-	}
-
-	/**
-	 * Return the current ServletContext.
-	 */
-	protected final ServletContext getServletContext() {
-		return this.webApplicationContext.getServletContext();
-	}
-
-	/**
-	 * Return the temporary directory for the current web application,
-	 * as provided by the servlet container.
-	 * @return the File representing the temporary directory
-	 */
-	protected final File getTempDir() {
-		return WebUtils.getTempDir(getServletContext());
-	}
+        synchronized (this) {
+            if (this.webApplicationContext == null) {
+                this.webApplicationContext = RequestContextUtils.findWebApplicationContext(request, servletContext);
+                this.messageSourceAccessor = new MessageSourceAccessor(this.webApplicationContext);
+            }
+        }
+        doPerform(componentContext, request, response);
+    }
 
 
-	/**
-	 * Perform the preparation for the component, allowing for any Exception to be thrown.
-	 * The ServletContext can be retrieved via getServletContext, if necessary.
-	 * The Spring WebApplicationContext can be accessed via getWebApplicationContext.
-	 * <p>This method will be called both in the Struts 1.1 and Struts 1.2 case,
-	 * by {@code perform} or {@code execute}, respectively.
-	 * @param componentContext current Tiles component context
-	 * @param request current HTTP request
-	 * @param response current HTTP response
-	 * @throws Exception in case of errors
-	 * @see org.apache.struts.tiles.Controller#perform
-	 * @see #getServletContext
-	 * @see #getWebApplicationContext
-	 * @see #perform
-	 * @see #execute
-	 */
-	protected abstract void doPerform(
-			ComponentContext componentContext, HttpServletRequest request, HttpServletResponse response)
-			throws Exception;
+    /**
+     * Subclasses can override this for custom initialization behavior.
+     * Gets called on initialization of the context for this controller.
+     *
+     * @throws org.springframework.context.ApplicationContextException in case of initialization errors
+     * @throws org.springframework.beans.BeansException                if thrown by application context methods
+     */
+    protected void initApplicationContext() throws BeansException {
+    }
+
+    /**
+     * Return the current Spring ApplicationContext.
+     *
+     * @return returns the current Spring ApplicationContext.
+     */
+    protected final ApplicationContext getApplicationContext() {
+        return this.webApplicationContext;
+    }
+
+    /**
+     * Return the current Spring WebApplicationContext.
+     *
+     * @return returns the current Spring ApplicationContext.
+     */
+    protected final WebApplicationContext getWebApplicationContext() {
+        return this.webApplicationContext;
+    }
+
+    /**
+     * Return a MessageSourceAccessor for the application context
+     * used by this object, for easy message access.
+     *
+     * @return a MessageSourceAccessor for the application context
+     */
+    protected final MessageSourceAccessor getMessageSourceAccessor() {
+        return this.messageSourceAccessor;
+    }
+
+    /**
+     * Return the current ServletContext.
+     *
+     * @return returns the current ServletContext
+     */
+    protected final ServletContext getServletContext() {
+        return this.webApplicationContext.getServletContext();
+    }
+
+    /**
+     * Return the temporary directory for the current web application,
+     * as provided by the servlet container.
+     *
+     * @return the File representing the temporary directory
+     */
+    protected final File getTempDir() {
+        return WebUtils.getTempDir(getServletContext());
+    }
+
+
+    /**
+     * Perform the preparation for the component, allowing for any Exception to be thrown.
+     * The ServletContext can be retrieved via getServletContext, if necessary.
+     * The Spring WebApplicationContext can be accessed via getWebApplicationContext.
+     * <p>This method will be called both in the Struts 1.1 and Struts 1.2 case,
+     * by {@code perform} or {@code execute}, respectively.
+     *
+     * @param componentContext current Tiles component context
+     * @param request          current HTTP request
+     * @param response         current HTTP response
+     * @throws Exception in case of errors
+     * @see org.apache.struts.tiles.Controller#perform
+     * @see #getServletContext
+     * @see #getWebApplicationContext
+     * @see #perform
+     * @see #execute
+     */
+    protected abstract void doPerform(
+            ComponentContext componentContext, HttpServletRequest request, HttpServletResponse response)
+            throws Exception;
 
 }

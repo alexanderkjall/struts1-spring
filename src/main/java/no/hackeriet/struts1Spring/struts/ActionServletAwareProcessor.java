@@ -28,43 +28,43 @@ import org.springframework.beans.factory.config.DestructionAwareBeanPostProcesso
  * Invokes {@code Action.setServlet} with {@code null} on
  * bean destruction, providing the same lifecycle handling as the
  * native Struts ActionServlet.
- *
+ * <p>
  * <p>ContextLoaderPlugIn automatically registers this processor
  * with the underlying bean factory of its WebApplicationContext.
  *
  * @author Juergen Hoeller
- * @since 1.0.1
  * @see ContextLoaderPlugIn
  * @see org.apache.struts.action.Action#setServlet
+ * @since 1.0.1
  */
 class ActionServletAwareProcessor implements DestructionAwareBeanPostProcessor {
 
-	private final ActionServlet actionServlet;
+    private final ActionServlet actionServlet;
 
 
-	/**
-	 * Create a new ActionServletAwareProcessor for the given servlet.
-	 */
-	public ActionServletAwareProcessor(ActionServlet actionServlet) {
-		this.actionServlet = actionServlet;
-	}
+    /**
+     * Create a new ActionServletAwareProcessor for the given servlet.
+     */
+    public ActionServletAwareProcessor(ActionServlet actionServlet) {
+        this.actionServlet = actionServlet;
+    }
 
 
-	public Object postProcessBeforeInitialization(Object bean, String beanName) {
-		if (bean instanceof Action) {
-			((Action) bean).setServlet(this.actionServlet);
-		}
-		return bean;
-	}
+    public Object postProcessBeforeInitialization(Object bean, String beanName) {
+        if (bean instanceof Action) {
+            ((Action) bean).setServlet(this.actionServlet);
+        }
+        return bean;
+    }
 
-	public Object postProcessAfterInitialization(Object bean, String beanName) {
-		return bean;
-	}
+    public Object postProcessAfterInitialization(Object bean, String beanName) {
+        return bean;
+    }
 
-	public void postProcessBeforeDestruction(Object bean, String beanName) {
-		if (bean instanceof Action) {
-			((Action) bean).setServlet(null);
-		}
-	}
+    public void postProcessBeforeDestruction(Object bean, String beanName) {
+        if (bean instanceof Action) {
+            ((Action) bean).setServlet(null);
+        }
+    }
 
 }

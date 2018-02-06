@@ -3,8 +3,8 @@
 
 <beans>
 
-	<bean name="/test" class="no.hackeriet.struts1Spring.struts.TestAction"/>
+    <bean name="/test" class="no.hackeriet.struts1Spring.struts.TestAction"/>
 
-	<bean name="/module/test2" class="no.hackeriet.struts1Spring.struts.TestAction"/>
+    <bean name="/module/test2" class="no.hackeriet.struts1Spring.struts.TestAction"/>
 
 </beans>

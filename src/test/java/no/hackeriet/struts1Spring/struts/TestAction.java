@@ -31,18 +31,18 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class TestAction extends Action implements BeanNameAware {
 
-	private String beanName;
+    private String beanName;
 
-	@Override
-	public void setBeanName(String beanName) {
-		this.beanName = beanName;
-	}
+    @Override
+    public void setBeanName(String beanName) {
+        this.beanName = beanName;
+    }
 
-	@Override
-	public ActionForward execute(
-			ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response){
+    @Override
+    public ActionForward execute(
+            ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) {
 
-		return new ActionForward(this.beanName);
-	}
+        return new ActionForward(this.beanName);
+    }
 
 }

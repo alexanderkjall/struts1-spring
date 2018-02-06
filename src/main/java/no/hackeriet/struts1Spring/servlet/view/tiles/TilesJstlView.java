@@ -28,7 +28,7 @@ import org.springframework.web.servlet.support.RequestContext;
  * <p><b>NOTE:</b> This TilesJstlView class supports Tiles 1.x,
  * a.k.a. "Struts Tiles", which comes as part of Struts 1.x.
  * For Tiles 2.x support, check out
- * {@link org.springframework.web.servlet.view.tiles2.TilesView}.
+ * org.springframework.web.servlet.view.tiles2.TilesView.
  *
  * <p>Exposes JSTL-specific request attributes specifying locale
  * and resource bundle for JSTL's formatting and message tags,
@@ -38,14 +38,14 @@ import org.springframework.web.servlet.support.RequestContext;
  * in TilesView itself.
  *
  * @author Juergen Hoeller
- * @since 20.08.2003
  * @see org.springframework.web.servlet.support.JstlUtils#exposeLocalizationContext
+ * @since 20.08.2003
  */
 public class TilesJstlView extends TilesView {
 
-	@Override
-	protected void exposeHelpers(HttpServletRequest request) throws Exception {
-		JstlUtils.exposeLocalizationContext(new RequestContext(request, getServletContext()));
-	}
+    @Override
+    protected void exposeHelpers(HttpServletRequest request) throws Exception {
+        JstlUtils.exposeLocalizationContext(new RequestContext(request, getServletContext()));
+    }
 
 }

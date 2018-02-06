@@ -88,7 +88,6 @@ import javax.servlet.ServletException;
  * agreement to reimplement the idea in Spring proper!
  *
  * @author Juergen Hoeller
- * @since 1.0.1
  * @see #SERVLET_CONTEXT_PREFIX
  * @see ActionSupport
  * @see DispatchActionSupport
@@ -97,297 +96,344 @@ import javax.servlet.ServletException;
  * @see DelegatingTilesRequestProcessor
  * @see org.springframework.web.context.ContextLoaderListener
  * @see org.springframework.web.servlet.FrameworkServlet
+ * @since 1.0.1
  */
 public class ContextLoaderPlugIn implements PlugIn {
 
-	/**
-	 * Suffix for WebApplicationContext namespaces. If a Struts ActionServlet is
-	 * given the name "action" in a context, the namespace used by this PlugIn will
-	 * resolve to "action-servlet".
-	 */
-	public static final String DEFAULT_NAMESPACE_SUFFIX = "-servlet";
+    /**
+     * Suffix for WebApplicationContext namespaces. If a Struts ActionServlet is
+     * given the name "action" in a context, the namespace used by this PlugIn will
+     * resolve to "action-servlet".
+     */
+    public static final String DEFAULT_NAMESPACE_SUFFIX = "-servlet";
 
-	/**
-	 * Default context class for ContextLoaderPlugIn.
-	 * @see org.springframework.web.context.support.XmlWebApplicationContext
-	 */
-	public static final Class DEFAULT_CONTEXT_CLASS = XmlWebApplicationContext.class;
+    /**
+     * Default context class for ContextLoaderPlugIn.
+     *
+     * @see org.springframework.web.context.support.XmlWebApplicationContext
+     */
+    public static final Class DEFAULT_CONTEXT_CLASS = XmlWebApplicationContext.class;
 
-	/**
-	 * Prefix for the ServletContext attribute for the WebApplicationContext.
-	 * The completion is the Struts module name.
-	 */
-	public static final String SERVLET_CONTEXT_PREFIX = ContextLoaderPlugIn.class.getName() + ".CONTEXT.";
-
-
-	protected final Log logger = LogFactory.getLog(getClass());
-
-	/** Custom WebApplicationContext class */
-	private Class contextClass = DEFAULT_CONTEXT_CLASS;
-
-	/** Namespace for this servlet */
-	private String namespace;
-
-	/** Explicit context config location */
-	private String contextConfigLocation;
-
-	/** The Struts ActionServlet that this PlugIn is registered with */
-	private ActionServlet actionServlet;
-
-	/** The Struts ModuleConfig that this PlugIn is registered with */
-	private ModuleConfig moduleConfig;
-
-	/** WebApplicationContext for the ActionServlet */
-	private WebApplicationContext webApplicationContext;
+    /**
+     * Prefix for the ServletContext attribute for the WebApplicationContext.
+     * The completion is the Struts module name.
+     */
+    public static final String SERVLET_CONTEXT_PREFIX = ContextLoaderPlugIn.class.getName() + ".CONTEXT.";
 
 
-	/**
-	 * Set a custom context class by name. This class must be of type WebApplicationContext,
-	 * when using the default ContextLoaderPlugIn implementation, the context class
-	 * must also implement ConfigurableWebApplicationContext.
-	 * @see #createWebApplicationContext
-	 */
-	public void setContextClassName(String contextClassName) throws ClassNotFoundException {
-		this.contextClass = ClassUtils.forName(contextClassName, null);
-	}
+    protected final Log logger = LogFactory.getLog(getClass());
 
-	/**
-	 * Set a custom context class. This class must be of type WebApplicationContext,
-	 * when using the default ContextLoaderPlugIn implementation, the context class
-	 * must also implement ConfigurableWebApplicationContext.
-	 * @see #createWebApplicationContext
-	 */
-	public void setContextClass(Class contextClass) {
-		this.contextClass = contextClass;
-	}
+    /**
+     * Custom WebApplicationContext class
+     */
+    private Class contextClass = DEFAULT_CONTEXT_CLASS;
 
-	/**
-	 * Return the custom context class.
-	 */
-	public Class getContextClass() {
-		return this.contextClass;
-	}
+    /**
+     * Namespace for this servlet
+     */
+    private String namespace;
 
-	/**
-	 * Set a custom namespace for the ActionServlet,
-	 * to be used for building a default context config location.
-	 */
-	public void setNamespace(String namespace) {
-		this.namespace = namespace;
-	}
+    /**
+     * Explicit context config location
+     */
+    private String contextConfigLocation;
 
-	/**
-	 * Return the namespace for the ActionServlet, falling back to default scheme if
-	 * no custom namespace was set: e.g. "test-servlet" for a servlet named "test".
-	 */
-	public String getNamespace() {
-		if (this.namespace != null) {
-			return this.namespace;
-		}
-		if (this.actionServlet != null) {
-			return this.actionServlet.getServletName() + DEFAULT_NAMESPACE_SUFFIX;
-		}
-		return null;
-	}
+    /**
+     * The Struts ActionServlet that this PlugIn is registered with
+     */
+    private ActionServlet actionServlet;
 
-	/**
-	 * Set the context config location explicitly, instead of relying on the default
-	 * location built from the namespace. This location string can consist of
-	 * multiple locations separated by any number of commas and spaces.
-	 */
-	public void setContextConfigLocation(String contextConfigLocation) {
-		this.contextConfigLocation = contextConfigLocation;
-	}
+    /**
+     * The Struts ModuleConfig that this PlugIn is registered with
+     */
+    private ModuleConfig moduleConfig;
 
-	/**
-	 * Return the explicit context config location, if any.
-	 */
-	public String getContextConfigLocation() {
-		return this.contextConfigLocation;
-	}
+    /**
+     * WebApplicationContext for the ActionServlet
+     */
+    private WebApplicationContext webApplicationContext;
 
 
-	/**
-	 * Create the ActionServlet's WebApplicationContext.
-	 */
-	public final void init(ActionServlet actionServlet, ModuleConfig moduleConfig) throws ServletException {
-		long startTime = System.currentTimeMillis();
-		if (logger.isInfoEnabled()) {
-			logger.info("ContextLoaderPlugIn for Struts ActionServlet '" + actionServlet.getServletName() +
-					", module '" + moduleConfig.getPrefix() + "': initialization started");
-		}
+    /**
+     * Set a custom context class by name. This class must be of type WebApplicationContext,
+     * when using the default ContextLoaderPlugIn implementation, the context class
+     * must also implement ConfigurableWebApplicationContext.
+     *
+     * @see #createWebApplicationContext
+     * @param contextClassName a custom context class by name
+     * @throws ClassNotFoundException when the class doesn't exist
+     */
+    public void setContextClassName(String contextClassName) throws ClassNotFoundException {
+        this.contextClass = ClassUtils.forName(contextClassName, null);
+    }
 
-		this.actionServlet = actionServlet;
-		this.moduleConfig = moduleConfig;
-		try {
-			this.webApplicationContext = initWebApplicationContext();
-			onInit();
-		}
-		catch (RuntimeException ex) {
-			logger.error("Context initialization failed", ex);
-			throw ex;
-		}
+    /**
+     * Set a custom context class. This class must be of type WebApplicationContext,
+     * when using the default ContextLoaderPlugIn implementation, the context class
+     * must also implement ConfigurableWebApplicationContext.
+     *
+     * @see #createWebApplicationContext
+     * @param contextClass a custom context class
+     */
+    public void setContextClass(Class contextClass) {
+        this.contextClass = contextClass;
+    }
 
-		if (logger.isInfoEnabled()) {
-			long elapsedTime = System.currentTimeMillis() - startTime;
-			logger.info("ContextLoaderPlugIn for Struts ActionServlet '" + actionServlet.getServletName() +
-					"', module '" + moduleConfig.getPrefix() + "': initialization completed in " + elapsedTime + " ms");
-		}
-	}
+    /**
+     * Return the custom context class.
+     * @return returns the custom context class.
+     */
+    public Class getContextClass() {
+        return this.contextClass;
+    }
 
-	/**
-	 * Return the Struts ActionServlet that this PlugIn is associated with.
-	 */
-	public final ActionServlet getActionServlet() {
-		return actionServlet;
-	}
+    /**
+     * Set a custom namespace for the ActionServlet,
+     * to be used for building a default context config location.
+     * @param namespace a custom namespace for the ActionServlet
+     */
+    public void setNamespace(String namespace) {
+        this.namespace = namespace;
+    }
 
-	/**
-	 * Return the name of the ActionServlet that this PlugIn is associated with.
-	 */
-	public final String getServletName() {
-		return this.actionServlet.getServletName();
-	}
+    /**
+     * Return the namespace for the ActionServlet, falling back to default scheme if
+     * no custom namespace was set: e.g. "test-servlet" for a servlet named "test".
+     * @return the namespace for the ActionServlet
+     */
+    public String getNamespace() {
+        if (this.namespace != null) {
+            return this.namespace;
+        }
+        if (this.actionServlet != null) {
+            return this.actionServlet.getServletName() + DEFAULT_NAMESPACE_SUFFIX;
+        }
+        return null;
+    }
 
-	/**
-	 * Return the ServletContext that this PlugIn is associated with.
-	 */
-	public final ServletContext getServletContext() {
-		return this.actionServlet.getServletContext();
-	}
+    /**
+     * Set the context config location explicitly, instead of relying on the default
+     * location built from the namespace. This location string can consist of
+     * multiple locations separated by any number of commas and spaces.
+     *
+     * @param contextConfigLocation the context config location
+     */
+    public void setContextConfigLocation(String contextConfigLocation) {
+        this.contextConfigLocation = contextConfigLocation;
+    }
 
-	/**
-	 * Return the Struts ModuleConfig that this PlugIn is associated with.
-	 */
-	public final ModuleConfig getModuleConfig() {
-		return this.moduleConfig;
-	}
-
-	/**
-	 * Return the prefix of the ModuleConfig that this PlugIn is associated with.
-	 * @see org.apache.struts.config.ModuleConfig#getPrefix
-	 */
-	public final String getModulePrefix() {
-		return this.moduleConfig.getPrefix();
-	}
-
-	/**
-	 * Initialize and publish the WebApplicationContext for the ActionServlet.
-	 * <p>Delegates to {@link #createWebApplicationContext} for actual creation.
-	 * <p>Can be overridden in subclasses. Call {@code getActionServlet()}
-	 * and/or {@code getModuleConfig()} to access the Struts configuration
-	 * that this PlugIn is associated with.
-	 * @throws org.springframework.beans.BeansException if the context couldn't be initialized
-	 * @throws IllegalStateException if there is already a context for the Struts ActionServlet
-	 * @see #getActionServlet()
-	 * @see #getServletName()
-	 * @see #getServletContext()
-	 * @see #getModuleConfig()
-	 * @see #getModulePrefix()
-	 */
-	protected WebApplicationContext initWebApplicationContext() throws BeansException, IllegalStateException {
-		getServletContext().log("Initializing WebApplicationContext for Struts ActionServlet '" +
-				getServletName() + "', module '" + getModulePrefix() + "'");
-		WebApplicationContext parent = WebApplicationContextUtils.getWebApplicationContext(getServletContext());
-
-		WebApplicationContext wac = createWebApplicationContext(parent);
-		if (logger.isInfoEnabled()) {
-			logger.info("Using context class '" + wac.getClass().getName() + "' for servlet '" + getServletName() + "'");
-		}
-
-		// Publish the context as a servlet context attribute.
-		String attrName = getServletContextAttributeName();
-		getServletContext().setAttribute(attrName, wac);
-		if (logger.isDebugEnabled()) {
-			logger.debug("Published WebApplicationContext of Struts ActionServlet '" + getServletName() +
-					"', module '" + getModulePrefix() + "' as ServletContext attribute with name [" + attrName + "]");
-		}
-
-		return wac;
-	}
-
-	/**
-	 * Instantiate the WebApplicationContext for the ActionServlet, either a default
-	 * XmlWebApplicationContext or a custom context class if set.
-	 * <p>This implementation expects custom contexts to implement ConfigurableWebApplicationContext.
-	 * Can be overridden in subclasses.
-	 * @throws org.springframework.beans.BeansException if the context couldn't be initialized
-	 * @see #setContextClass
-	 * @see org.springframework.web.context.support.XmlWebApplicationContext
-	 */
-	protected WebApplicationContext createWebApplicationContext(WebApplicationContext parent)
-			throws BeansException {
-
-		if (logger.isDebugEnabled()) {
-			logger.debug("ContextLoaderPlugIn for Struts ActionServlet '" + getServletName() +
-					"', module '" + getModulePrefix() + "' will try to create custom WebApplicationContext " +
-					"context of class '" + getContextClass().getName() + "', using parent context [" + parent + "]");
-		}
-		if (!ConfigurableWebApplicationContext.class.isAssignableFrom(getContextClass())) {
-			throw new ApplicationContextException(
-					"Fatal initialization error in ContextLoaderPlugIn for Struts ActionServlet '" + getServletName() +
-					"', module '" + getModulePrefix() + "': custom WebApplicationContext class [" +
-					getContextClass().getName() + "] is not of type ConfigurableWebApplicationContext");
-		}
-
-		ConfigurableWebApplicationContext wac =
-				(ConfigurableWebApplicationContext) BeanUtils.instantiateClass(getContextClass());
-		wac.setParent(parent);
-		wac.setServletContext(getServletContext());
-		wac.setNamespace(getNamespace());
-		if (getContextConfigLocation() != null) {
-			wac.setConfigLocations(
-				StringUtils.tokenizeToStringArray(
-							getContextConfigLocation(), ConfigurableWebApplicationContext.CONFIG_LOCATION_DELIMITERS));
-		}
-		wac.addBeanFactoryPostProcessor(
-				new BeanFactoryPostProcessor() {
-					public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) {
-						beanFactory.addBeanPostProcessor(new ActionServletAwareProcessor(getActionServlet()));
-						beanFactory.ignoreDependencyType(ActionServlet.class);
-					}
-				}
-		);
-
-		wac.refresh();
-		return wac;
-	}
-
-	/**
-	 * Return the ServletContext attribute name for this PlugIn's WebApplicationContext.
-	 * <p>The default implementation returns SERVLET_CONTEXT_PREFIX + module prefix.
-	 * @see #SERVLET_CONTEXT_PREFIX
-	 * @see #getModulePrefix()
-	 */
-	public String getServletContextAttributeName() {
-		return SERVLET_CONTEXT_PREFIX + getModulePrefix();
-	}
-
-	/**
-	 * Return this PlugIn's WebApplicationContext.
-	 */
-	public final WebApplicationContext getWebApplicationContext() {
-		return webApplicationContext;
-	}
-
-	/**
-	 * Callback for custom initialization after the context has been set up.
-	 * @throws ServletException if initialization failed
-	 */
-	protected void onInit() throws ServletException {
-	}
+    /**
+     * Return the explicit context config location, if any.
+     * @return returns the explicit context config location, if any.
+     */
+    public String getContextConfigLocation() {
+        return this.contextConfigLocation;
+    }
 
 
-	/**
-	 * Close the WebApplicationContext of the ActionServlet.
-	 * @see org.springframework.context.ConfigurableApplicationContext#close()
-	 */
-	public void destroy() {
-		getServletContext().log("Closing WebApplicationContext of Struts ActionServlet '" +
-				getServletName() + "', module '" + getModulePrefix() + "'");
-		if (getWebApplicationContext() instanceof ConfigurableApplicationContext) {
-			((ConfigurableApplicationContext) getWebApplicationContext()).close();
-		}
-	}
+    /**
+     * Create the ActionServlet's WebApplicationContext.
+     *
+     * @param actionServlet the actionServlet
+     * @param moduleConfig the moduleConfig
+     */
+    public final void init(ActionServlet actionServlet, ModuleConfig moduleConfig) throws ServletException {
+        long startTime = System.currentTimeMillis();
+        if (logger.isInfoEnabled()) {
+            logger.info("ContextLoaderPlugIn for Struts ActionServlet '" + actionServlet.getServletName() +
+                    ", module '" + moduleConfig.getPrefix() + "': initialization started");
+        }
+
+        this.actionServlet = actionServlet;
+        this.moduleConfig = moduleConfig;
+        try {
+            this.webApplicationContext = initWebApplicationContext();
+            onInit();
+        } catch (RuntimeException ex) {
+            logger.error("Context initialization failed", ex);
+            throw ex;
+        }
+
+        if (logger.isInfoEnabled()) {
+            long elapsedTime = System.currentTimeMillis() - startTime;
+            logger.info("ContextLoaderPlugIn for Struts ActionServlet '" + actionServlet.getServletName() +
+                    "', module '" + moduleConfig.getPrefix() + "': initialization completed in " + elapsedTime + " ms");
+        }
+    }
+
+    /**
+     * Return the Struts ActionServlet that this PlugIn is associated with.
+     *
+     * @return the Struts ActionServlet that this PlugIn is associated with
+     */
+    public final ActionServlet getActionServlet() {
+        return actionServlet;
+    }
+
+    /**
+     * Return the name of the ActionServlet that this PlugIn is associated with.
+     *
+     * @return the name of the ActionServlet that this PlugIn is associated with
+     */
+    public final String getServletName() {
+        return this.actionServlet.getServletName();
+    }
+
+    /**
+     * Return the ServletContext that this PlugIn is associated with.
+     *
+     * @return the ServletContext that this PlugIn is associated with.
+     */
+    public final ServletContext getServletContext() {
+        return this.actionServlet.getServletContext();
+    }
+
+    /**
+     * Return the Struts ModuleConfig that this PlugIn is associated with.
+     *
+     * @return the Struts ModuleConfig that this PlugIn is associated with.
+     */
+    public final ModuleConfig getModuleConfig() {
+        return this.moduleConfig;
+    }
+
+    /**
+     * Return the prefix of the ModuleConfig that this PlugIn is associated with.
+     *
+     * @see org.apache.struts.config.ModuleConfig#getPrefix
+     * @return the prefix of the ModuleConfig that this PlugIn is associated with.
+     */
+    public final String getModulePrefix() {
+        return this.moduleConfig.getPrefix();
+    }
+
+    /**
+     * Initialize and publish the WebApplicationContext for the ActionServlet.
+     * <p>Delegates to {@link #createWebApplicationContext} for actual creation.
+     * <p>Can be overridden in subclasses. Call {@code getActionServlet()}
+     * and/or {@code getModuleConfig()} to access the Struts configuration
+     * that this PlugIn is associated with.
+     *
+     * @return the created WebApplicationContext
+     * @throws org.springframework.beans.BeansException if the context couldn't be initialized
+     * @throws IllegalStateException                    if there is already a context for the Struts ActionServlet
+     * @see #getActionServlet()
+     * @see #getServletName()
+     * @see #getServletContext()
+     * @see #getModuleConfig()
+     * @see #getModulePrefix()
+     */
+    protected WebApplicationContext initWebApplicationContext() throws BeansException, IllegalStateException {
+        getServletContext().log("Initializing WebApplicationContext for Struts ActionServlet '" +
+                getServletName() + "', module '" + getModulePrefix() + "'");
+        WebApplicationContext parent = WebApplicationContextUtils.getWebApplicationContext(getServletContext());
+
+        WebApplicationContext wac = createWebApplicationContext(parent);
+        if (logger.isInfoEnabled()) {
+            logger.info("Using context class '" + wac.getClass().getName() + "' for servlet '" + getServletName() + "'");
+        }
+
+        // Publish the context as a servlet context attribute.
+        String attrName = getServletContextAttributeName();
+        getServletContext().setAttribute(attrName, wac);
+        if (logger.isDebugEnabled()) {
+            logger.debug("Published WebApplicationContext of Struts ActionServlet '" + getServletName() +
+                    "', module '" + getModulePrefix() + "' as ServletContext attribute with name [" + attrName + "]");
+        }
+
+        return wac;
+    }
+
+    /**
+     * Instantiate the WebApplicationContext for the ActionServlet, either a default
+     * XmlWebApplicationContext or a custom context class if set.
+     * <p>This implementation expects custom contexts to implement ConfigurableWebApplicationContext.
+     * Can be overridden in subclasses.
+     *
+     * @param parent the WebApplicationContext parent
+     * @return the created WebApplicationContext
+     * @throws org.springframework.beans.BeansException if the context couldn't be initialized
+     * @see #setContextClass
+     * @see org.springframework.web.context.support.XmlWebApplicationContext
+     */
+    protected WebApplicationContext createWebApplicationContext(WebApplicationContext parent)
+            throws BeansException {
+
+        if (logger.isDebugEnabled()) {
+            logger.debug("ContextLoaderPlugIn for Struts ActionServlet '" + getServletName() +
+                    "', module '" + getModulePrefix() + "' will try to create custom WebApplicationContext " +
+                    "context of class '" + getContextClass().getName() + "', using parent context [" + parent + "]");
+        }
+        if (!ConfigurableWebApplicationContext.class.isAssignableFrom(getContextClass())) {
+            throw new ApplicationContextException(
+                    "Fatal initialization error in ContextLoaderPlugIn for Struts ActionServlet '" + getServletName() +
+                            "', module '" + getModulePrefix() + "': custom WebApplicationContext class [" +
+                            getContextClass().getName() + "] is not of type ConfigurableWebApplicationContext");
+        }
+
+        ConfigurableWebApplicationContext wac =
+                (ConfigurableWebApplicationContext) BeanUtils.instantiateClass(getContextClass());
+        wac.setParent(parent);
+        wac.setServletContext(getServletContext());
+        wac.setNamespace(getNamespace());
+        if (getContextConfigLocation() != null) {
+            wac.setConfigLocations(
+                    StringUtils.tokenizeToStringArray(
+                            getContextConfigLocation(), ConfigurableWebApplicationContext.CONFIG_LOCATION_DELIMITERS));
+        }
+        wac.addBeanFactoryPostProcessor(
+                new BeanFactoryPostProcessor() {
+                    public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) {
+                        beanFactory.addBeanPostProcessor(new ActionServletAwareProcessor(getActionServlet()));
+                        beanFactory.ignoreDependencyType(ActionServlet.class);
+                    }
+                }
+        );
+
+        wac.refresh();
+        return wac;
+    }
+
+    /**
+     * Return the ServletContext attribute name for this PlugIn's WebApplicationContext.
+     * <p>The default implementation returns SERVLET_CONTEXT_PREFIX + module prefix.
+     *
+     * @return the ServletContext attribute name for this PlugIn's WebApplicationContext
+     * @see #SERVLET_CONTEXT_PREFIX
+     * @see #getModulePrefix()
+     */
+    public String getServletContextAttributeName() {
+        return SERVLET_CONTEXT_PREFIX + getModulePrefix();
+    }
+
+    /**
+     * Return this PlugIn's WebApplicationContext.
+     * @return this PlugIn's WebApplicationContext.
+     */
+    public final WebApplicationContext getWebApplicationContext() {
+        return webApplicationContext;
+    }
+
+    /**
+     * Callback for custom initialization after the context has been set up.
+     *
+     * @throws ServletException if initialization failed
+     */
+    protected void onInit() throws ServletException {
+    }
+
+
+    /**
+     * Close the WebApplicationContext of the ActionServlet.
+     *
+     * @see org.springframework.context.ConfigurableApplicationContext#close()
+     */
+    public void destroy() {
+        getServletContext().log("Closing WebApplicationContext of Struts ActionServlet '" +
+                getServletName() + "', module '" + getModulePrefix() + "'");
+        if (getWebApplicationContext() instanceof ConfigurableApplicationContext) {
+            ((ConfigurableApplicationContext) getWebApplicationContext()).close();
+        }
+    }
 
 }

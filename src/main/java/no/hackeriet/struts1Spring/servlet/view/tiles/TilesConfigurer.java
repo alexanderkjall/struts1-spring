@@ -35,7 +35,7 @@ import org.springframework.web.context.support.WebApplicationObjectSupport;
  * <p><b>NOTE:</b> This TilesConfigurer class supports Tiles 1.x,
  * a.k.a. "Struts Tiles", which comes as part of Struts 1.x.
  * For Tiles 2.x support, check out
- * {@link org.springframework.web.servlet.view.tiles2.TilesConfigurer}.
+ * org.springframework.web.servlet.view.tiles2.TilesConfigurer.
  *
  * <p>The TilesConfigurer simply configures a Tiles DefinitionsFactory using
  * a set of files containing definitions, to be accessed by {@link TilesView}
@@ -49,17 +49,17 @@ import org.springframework.web.context.support.WebApplicationObjectSupport;
  * <p>A typical TilesConfigurer bean definition looks as follows:
  *
  * <pre>
- * &lt;bean id="tilesConfigurer" class="org.springframework.web.servlet.view.tiles.TilesConfigurer">
- *   &lt;property name="definitions">
- *     &lt;list>
- *       &lt;value>/WEB-INF/defs/general.xml&lt;/value>
- *       &lt;value>/WEB-INF/defs/widgets.xml&lt;/value>
- *       &lt;value>/WEB-INF/defs/administrator.xml&lt;/value>
- *       &lt;value>/WEB-INF/defs/customer.xml&lt;/value>
- *       &lt;value>/WEB-INF/defs/templates.xml&lt;/value>
- *     &lt;/list>
- *   &lt;/property>
- * &lt;/bean></pre>
+ * &lt;bean id="tilesConfigurer" class="org.springframework.web.servlet.view.tiles.TilesConfigurer"&gt;
+ *   &lt;property name="definitions"&gt;
+ *     &lt;list&gt;
+ *       &lt;value&gt;/WEB-INF/defs/general.xml&lt;/value&gt;
+ *       &lt;value&gt;/WEB-INF/defs/widgets.xml&lt;/value&gt;
+ *       &lt;value&gt;/WEB-INF/defs/administrator.xml&lt;/value&gt;
+ *       &lt;value&gt;/WEB-INF/defs/customer.xml&lt;/value&gt;
+ *       &lt;value&gt;/WEB-INF/defs/templates.xml&lt;/value&gt;
+ *     &lt;/list&gt;
+ *   &lt;/property&gt;
+ * &lt;/bean&gt;</pre>
  *
  * The values in the list are the actual files containing the definitions.
  *
@@ -70,78 +70,90 @@ import org.springframework.web.context.support.WebApplicationObjectSupport;
  */
 public class TilesConfigurer extends WebApplicationObjectSupport implements InitializingBean {
 
-	/** Definition URLs mapped to descriptions */
-	private String[] definitions;
+    /**
+     * Definition URLs mapped to descriptions
+     */
+    private String[] definitions;
 
-	/** Validate the Tiles definitions? */
-	private boolean validateDefinitions = true;
+    /**
+     * Validate the Tiles definitions?
+     */
+    private boolean validateDefinitions = true;
 
-	/** Factory class for Tiles */
-	private Class factoryClass = I18nFactorySet.class;
-
-
-	/**
-	 * Set the Tiles definitions, i.e. the list of files containing the definitions.
-	 */
-	public void setDefinitions(String[] definitions) {
-		this.definitions = definitions;
-	}
-
-	/**
-	 * Set whether to validate the Tiles XML definitions. Default is "true".
-	 */
-	public void setValidateDefinitions(boolean validateDefinitions) {
-		this.validateDefinitions = validateDefinitions;
-	}
-
-	/**
-	 * Set the factory class for Tiles. Default is I18nFactorySet.
-	 * @see org.apache.struts.tiles.xmlDefinition.I18nFactorySet
-	 */
-	public void setFactoryClass(Class factoryClass) {
-		this.factoryClass = factoryClass;
-	}
+    /**
+     * Factory class for Tiles
+     */
+    private Class factoryClass = I18nFactorySet.class;
 
 
-	/**
-	 * Initialize the Tiles definition factory.
-	 * Delegates to createDefinitionsFactory for the actual creation.
-	 * @throws DefinitionsFactoryException if an error occurs
-	 * @see #createDefinitionsFactory
-	 */
-	public void afterPropertiesSet() throws DefinitionsFactoryException {
-		logger.debug("TilesConfigurer: initializion started");
+    /**
+     * Set the Tiles definitions, i.e. the list of files containing the definitions.
+     * @param definitions the list of files containing the definitions.
+     */
+    public void setDefinitions(String[] definitions) {
+        this.definitions = definitions;
+    }
 
-		// initialize the configuration for the definitions factory
-		DefinitionsFactoryConfig factoryConfig = new DefinitionsFactoryConfig();
-		factoryConfig.setFactoryName("");
-		factoryConfig.setFactoryClassname(this.factoryClass.getName());
-		factoryConfig.setParserValidate(this.validateDefinitions);
+    /**
+     * Set whether to validate the Tiles XML definitions. Default is "true".
+     * @param  validateDefinitions whether to validate the Tiles XML definitions
+     */
+    public void setValidateDefinitions(boolean validateDefinitions) {
+        this.validateDefinitions = validateDefinitions;
+    }
 
-		if (this.definitions != null) {
-			String defs = StringUtils.arrayToCommaDelimitedString(this.definitions);
-			if (logger.isInfoEnabled()) {
-				logger.info("TilesConfigurer: adding definitions [" + defs + "]");
-			}
-			factoryConfig.setDefinitionConfigFiles(defs);
-		}
+    /**
+     * Set the factory class for Tiles. Default is I18nFactorySet.
+     *
+     * @see org.apache.struts.tiles.xmlDefinition.I18nFactorySet
+     * @param factoryClass factory class for Tiles. Default is I18nFactorySet.
+     */
+    public void setFactoryClass(Class factoryClass) {
+        this.factoryClass = factoryClass;
+    }
 
-		// initialize the definitions factory
-		createDefinitionsFactory(factoryConfig);
 
-		logger.debug("TilesConfigurer: initialization completed");
-	}
+    /**
+     * Initialize the Tiles definition factory.
+     * Delegates to createDefinitionsFactory for the actual creation.
+     *
+     * @throws DefinitionsFactoryException if an error occurs
+     * @see #createDefinitionsFactory
+     */
+    public void afterPropertiesSet() throws DefinitionsFactoryException {
+        logger.debug("TilesConfigurer: initializion started");
 
-	/**
-	 * Create the Tiles DefinitionsFactory and expose it to the ServletContext.
-	 * @param factoryConfig the configuration for the DefinitionsFactory
-	 * @return the DefinitionsFactory
-	 * @throws DefinitionsFactoryException if an error occurs
-	 */
-	protected DefinitionsFactory createDefinitionsFactory(DefinitionsFactoryConfig factoryConfig)
-			throws DefinitionsFactoryException {
+        // initialize the configuration for the definitions factory
+        DefinitionsFactoryConfig factoryConfig = new DefinitionsFactoryConfig();
+        factoryConfig.setFactoryName("");
+        factoryConfig.setFactoryClassname(this.factoryClass.getName());
+        factoryConfig.setParserValidate(this.validateDefinitions);
 
-		return TilesUtil.createDefinitionsFactory(getServletContext(), factoryConfig);
-	}
+        if (this.definitions != null) {
+            String defs = StringUtils.arrayToCommaDelimitedString(this.definitions);
+            if (logger.isInfoEnabled()) {
+                logger.info("TilesConfigurer: adding definitions [" + defs + "]");
+            }
+            factoryConfig.setDefinitionConfigFiles(defs);
+        }
+
+        // initialize the definitions factory
+        createDefinitionsFactory(factoryConfig);
+
+        logger.debug("TilesConfigurer: initialization completed");
+    }
+
+    /**
+     * Create the Tiles DefinitionsFactory and expose it to the ServletContext.
+     *
+     * @param factoryConfig the configuration for the DefinitionsFactory
+     * @return the DefinitionsFactory
+     * @throws DefinitionsFactoryException if an error occurs
+     */
+    protected DefinitionsFactory createDefinitionsFactory(DefinitionsFactoryConfig factoryConfig)
+            throws DefinitionsFactoryException {
+
+        return TilesUtil.createDefinitionsFactory(getServletContext(), factoryConfig);
+    }
 
 }
