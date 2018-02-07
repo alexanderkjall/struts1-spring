@@ -16,18 +16,34 @@
 
 package no.hackeriet.struts1Spring.servlet.view.tiles;
 
-/*
+import org.apache.struts.tiles.ComponentContext;
+import org.apache.struts.tiles.PathAttribute;
+import org.apache.struts.tiles.taglib.ComponentConstants;
+import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
-*/
+import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.context.support.StaticWebApplicationContext;
+import org.springframework.web.servlet.DispatcherServlet;
+import org.springframework.web.servlet.View;
+import org.springframework.web.servlet.i18n.AcceptHeaderLocaleResolver;
+import org.springframework.web.servlet.i18n.FixedLocaleResolver;
+import org.springframework.web.servlet.view.InternalResourceViewResolver;
+
+import javax.servlet.jsp.jstl.core.Config;
+import javax.servlet.jsp.jstl.fmt.LocalizationContext;
+import java.util.HashMap;
+import java.util.Locale;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 /**
  * @author Alef Arendsen
  * @author Juergen Hoeller
  */
 public class TilesViewTests {
-/*
 	protected StaticWebApplicationContext prepareWebApplicationContext() throws Exception {
 		StaticWebApplicationContext wac = new StaticWebApplicationContext();
 		MockServletContext sc = new MockServletContext("/org/springframework/web/servlet/view/tiles/");
@@ -161,5 +177,4 @@ public class TilesViewTests {
 		assertEquals("/WEB-INF/jsp/otherContent.jsp", attr.getValue());
 		assertEquals("testVal", request.getAttribute("testAttr"));
 	}
-*/
 }

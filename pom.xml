@@ -4,10 +4,10 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <modelVersion>4.0.0</modelVersion>
     <groupId>no.hackeriet</groupId>
-    <artifactId>struts1-spring</artifactId>
+    <artifactId>struts1-spring5</artifactId>
     <version>1.0.0-SNAPSHOT</version>
-    <name>Struts1 Spring</name>
-    <description>Struts1 Spring Integration</description>
+    <name>Struts1 Spring5</name>
+    <description>Struts1 Spring5 Integration</description>
     <url>https://github.com/alexanderkjall/struts1-spring</url>
 
     <organization>
@@ -113,6 +113,24 @@
             <version>4.12</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-test</artifactId>
+            <version>5.0.0.RELEASE</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <version>2.13.0</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.tomcat</groupId>
+            <artifactId>tomcat-jsp-api</artifactId>
+            <version>9.0.4</version>
+            <scope>test</scope>
+        </dependency>
 
     </dependencies>
 
@@ -189,6 +207,13 @@
                         <algorithm>SHA-1</algorithm>
                     </algorithms>
                 </configuration>
+            </plugin>
+
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.20.1</version>
             </plugin>
         </plugins>
     </build>

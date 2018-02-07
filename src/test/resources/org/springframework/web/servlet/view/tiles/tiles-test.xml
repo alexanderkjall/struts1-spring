@@ -11,7 +11,7 @@
     </definition>
 
     <definition name="testTileWithController"
-                controllerClass="org.springframework.web.servlet.view.tiles.TestComponentController">
+                controllerClass="no.hackeriet.struts1Spring.servlet.view.tiles.TestComponentController">
         <put name="content" value="/WEB-INF/jsp/otherContent.jsp" type="page"/>
     </definition>
 

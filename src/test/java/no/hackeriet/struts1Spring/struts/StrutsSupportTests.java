@@ -16,18 +16,35 @@
 
 package no.hackeriet.struts1Spring.struts;
 
-/*
+import org.apache.struts.action.ActionForward;
+import org.apache.struts.action.ActionMapping;
+import org.apache.struts.action.ActionServlet;
+import org.apache.struts.config.ModuleConfig;
+import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
-*/
+import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.context.support.StaticWebApplicationContext;
+
+import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
+
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 /**
  * @author Juergen Hoeller
  * @since 09.04.2004
  */
 public class StrutsSupportTests {
-/*
 	@Test
 	@SuppressWarnings("serial")
 	public void actionSupportWithContextLoaderPlugIn() throws ServletException {
@@ -215,7 +232,7 @@ public class StrutsSupportTests {
 		};
 
 		ModuleConfig moduleConfig = mock(ModuleConfig.class);
-		given(moduleConfig.getPrefix()).willReturn("");
+		when(moduleConfig.getPrefix()).thenReturn("");
 
 		plugin.init(actionServlet, moduleConfig);
 		assertTrue(servletContext.getAttribute(ContextLoaderPlugIn.SERVLET_CONTEXT_PREFIX) != null);
@@ -254,7 +271,7 @@ public class StrutsSupportTests {
 		};
 
 		ModuleConfig moduleConfig = mock(ModuleConfig.class);
-		given(moduleConfig.getPrefix()).willReturn("/module");
+		when(moduleConfig.getPrefix()).thenReturn("/module");
 
 		plugin.init(actionServlet, moduleConfig);
 		assertTrue(servletContext.getAttribute(ContextLoaderPlugIn.SERVLET_CONTEXT_PREFIX) == null);
@@ -296,10 +313,10 @@ public class StrutsSupportTests {
 		};
 
 		ModuleConfig defaultModuleConfig = mock(ModuleConfig.class);
-		given(defaultModuleConfig.getPrefix()).willReturn("");
+		when(defaultModuleConfig.getPrefix()).thenReturn("");
 
 		ModuleConfig moduleConfig = mock(ModuleConfig.class);
-		given(moduleConfig.getPrefix()).willReturn("/module");
+		when(moduleConfig.getPrefix()).thenReturn("/module");
 
 
 		plugin.init(actionServlet, defaultModuleConfig);
@@ -321,5 +338,4 @@ public class StrutsSupportTests {
 		plugin.destroy();
 		assertTrue(testAction.getServlet() == null);
 	}
-*/
 }
