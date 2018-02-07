@@ -29,11 +29,6 @@
             <name>Alexander Kjäll</name>
             <email>alexander.kjall@gmail.com</email>
         </developer>
-        <developer>
-            <id>jhoeller</id>
-            <name>Juergen Hoeller</name>
-            <email>jhoeller@gopivotal.com</email>
-        </developer>
     </developers>
 
     <scm>
