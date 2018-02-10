@@ -34,7 +34,8 @@ import java.util.Locale;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -229,7 +230,7 @@ public class StrutsSupportTest {
         when(moduleConfig.getPrefix()).thenReturn("");
 
         plugin.init(actionServlet, moduleConfig);
-        assertTrue(servletContext.getAttribute(ContextLoaderPlugIn.SERVLET_CONTEXT_PREFIX) != null);
+        assertNotNull(servletContext.getAttribute(ContextLoaderPlugIn.SERVLET_CONTEXT_PREFIX));
 
         DelegatingActionProxy proxy = new DelegatingActionProxy();
         proxy.setServlet(actionServlet);
@@ -241,10 +242,10 @@ public class StrutsSupportTest {
         assertEquals("/test", forward.getPath());
 
         TestAction testAction = (TestAction) plugin.getWebApplicationContext().getBean("/test");
-        assertTrue(testAction.getServlet() != null);
+        assertNotNull(testAction.getServlet());
         proxy.setServlet(null);
         plugin.destroy();
-        assertTrue(testAction.getServlet() == null);
+        assertNull(testAction.getServlet());
     }
 
     @Test
@@ -268,8 +269,8 @@ public class StrutsSupportTest {
         when(moduleConfig.getPrefix()).thenReturn("/module");
 
         plugin.init(actionServlet, moduleConfig);
-        assertTrue(servletContext.getAttribute(ContextLoaderPlugIn.SERVLET_CONTEXT_PREFIX) == null);
-        assertTrue(servletContext.getAttribute(ContextLoaderPlugIn.SERVLET_CONTEXT_PREFIX + "/module") != null);
+        assertNull(servletContext.getAttribute(ContextLoaderPlugIn.SERVLET_CONTEXT_PREFIX));
+        assertNotNull(servletContext.getAttribute(ContextLoaderPlugIn.SERVLET_CONTEXT_PREFIX + "/module"));
 
         DelegatingActionProxy proxy = new DelegatingActionProxy();
         proxy.setServlet(actionServlet);
@@ -281,10 +282,10 @@ public class StrutsSupportTest {
         assertEquals("/module/test2", forward.getPath());
 
         TestAction testAction = (TestAction) plugin.getWebApplicationContext().getBean("/module/test2");
-        assertTrue(testAction.getServlet() != null);
+        assertNotNull(testAction.getServlet());
         proxy.setServlet(null);
         plugin.destroy();
-        assertTrue(testAction.getServlet() == null);
+        assertNull(testAction.getServlet());
 
         verify(moduleConfig);
     }
@@ -314,8 +315,8 @@ public class StrutsSupportTest {
 
 
         plugin.init(actionServlet, defaultModuleConfig);
-        assertTrue(servletContext.getAttribute(ContextLoaderPlugIn.SERVLET_CONTEXT_PREFIX) != null);
-        assertTrue(servletContext.getAttribute(ContextLoaderPlugIn.SERVLET_CONTEXT_PREFIX + "/module") == null);
+        assertNotNull(servletContext.getAttribute(ContextLoaderPlugIn.SERVLET_CONTEXT_PREFIX));
+        assertNull(servletContext.getAttribute(ContextLoaderPlugIn.SERVLET_CONTEXT_PREFIX + "/module"));
 
         DelegatingActionProxy proxy = new DelegatingActionProxy();
         proxy.setServlet(actionServlet);
@@ -327,9 +328,9 @@ public class StrutsSupportTest {
         assertEquals("/module/test2", forward.getPath());
 
         TestAction testAction = (TestAction) plugin.getWebApplicationContext().getBean("/module/test2");
-        assertTrue(testAction.getServlet() != null);
+        assertNotNull(testAction.getServlet());
         proxy.setServlet(null);
         plugin.destroy();
-        assertTrue(testAction.getServlet() == null);
+        assertNull(testAction.getServlet());
     }
 }
