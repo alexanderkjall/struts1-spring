@@ -39,8 +39,7 @@ public class TestAction extends Action implements BeanNameAware {
     }
 
     @Override
-    public ActionForward execute(
-            ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) {
+    public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) {
 
         return new ActionForward(this.beanName);
     }

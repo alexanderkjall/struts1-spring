@@ -32,5 +32,4 @@ public class TestComponentController extends ComponentControllerSupport {
         request.setAttribute("testAttr", "testVal");
         TilesView.setPath(request, "/WEB-INF/jsp/layout.jsp");
     }
-
 }
