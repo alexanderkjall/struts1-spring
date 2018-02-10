@@ -33,7 +33,6 @@ import org.springframework.validation.ObjectError;
 
 import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.InvocationTargetException;
-import java.util.Iterator;
 import java.util.Locale;
 
 /**
@@ -106,7 +105,7 @@ public class SpringBindingActionForm extends ActionForm {
         // is available on ActionMessage: ActionMessage(String, boolean)
         // with "false" to be passed into the boolean flag.
         try {
-            ActionMessage.class.getConstructor(new Class[]{String.class, boolean.class});
+            ActionMessage.class.getConstructor(String.class, boolean.class);
         } catch (NoSuchMethodException ex) {
             defaultActionMessageAvailable = false;
         }
@@ -159,9 +158,7 @@ public class SpringBindingActionForm extends ActionForm {
      */
     private ActionMessages getActionMessages() {
         ActionMessages actionMessages = new ActionMessages();
-        Iterator it = this.errors.getAllErrors().iterator();
-        while (it.hasNext()) {
-            ObjectError objectError = (ObjectError) it.next();
+        for (ObjectError objectError : this.errors.getAllErrors()) {
             String effectiveMessageKey = findEffectiveMessageKey(objectError);
             if (effectiveMessageKey == null && !defaultActionMessageAvailable) {
                 // Need to specify default code despite it not being resolvable:
@@ -195,11 +192,9 @@ public class SpringBindingActionForm extends ActionForm {
                 String[] codes = resolvable.getCodes();
                 boolean resolved = false;
                 if (this.messageResources != null) {
-                    for (int j = 0; j < codes.length; j++) {
-                        String code = codes[j];
+                    for (String code : codes) {
                         if (this.messageResources.isPresent(this.locale, code)) {
-                            arguments[i] = this.messageResources.getMessage(
-                                    this.locale, code, resolveArguments(resolvable.getArguments()));
+                            arguments[i] = this.messageResources.getMessage(this.locale, code, resolveArguments(resolvable.getArguments()));
                             resolved = true;
                             break;
                         }
@@ -222,15 +217,15 @@ public class SpringBindingActionForm extends ActionForm {
     private String findEffectiveMessageKey(ObjectError error) {
         if (this.messageResources != null) {
             String[] possibleMatches = error.getCodes();
-            for (int i = 0; i < possibleMatches.length; i++) {
+            for (String possibleMatch : possibleMatches) {
                 if (logger.isDebugEnabled()) {
-                    logger.debug("Looking for error code '" + possibleMatches[i] + "'");
+                    logger.debug("Looking for error code '" + possibleMatch + "'");
                 }
-                if (this.messageResources.isPresent(this.locale, possibleMatches[i])) {
+                if (this.messageResources.isPresent(this.locale, possibleMatch)) {
                     if (logger.isDebugEnabled()) {
-                        logger.debug("Found error code '" + possibleMatches[i] + "' in resource bundle");
+                        logger.debug("Found error code '" + possibleMatch + "' in resource bundle");
                     }
-                    return possibleMatches[i];
+                    return possibleMatch;
                 }
             }
         }

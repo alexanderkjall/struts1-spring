@@ -23,8 +23,6 @@ import org.apache.struts.action.PlugIn;
 import org.apache.struts.config.ModuleConfig;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
-import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.context.ApplicationContextException;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.util.ClassUtils;
@@ -382,11 +380,9 @@ public class ContextLoaderPlugIn implements PlugIn {
                             getContextConfigLocation(), ConfigurableWebApplicationContext.CONFIG_LOCATION_DELIMITERS));
         }
         wac.addBeanFactoryPostProcessor(
-                new BeanFactoryPostProcessor() {
-                    public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) {
-                        beanFactory.addBeanPostProcessor(new ActionServletAwareProcessor(getActionServlet()));
-                        beanFactory.ignoreDependencyType(ActionServlet.class);
-                    }
+                beanFactory -> {
+                    beanFactory.addBeanPostProcessor(new ActionServletAwareProcessor(getActionServlet()));
+                    beanFactory.ignoreDependencyType(ActionServlet.class);
                 }
         );
 

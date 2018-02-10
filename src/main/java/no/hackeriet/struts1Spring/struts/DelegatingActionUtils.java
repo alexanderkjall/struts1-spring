@@ -209,7 +209,7 @@ public abstract class DelegatingActionUtils {
      */
     public static boolean getDependencyCheck(ActionServlet actionServlet) {
         String dependencyCheck = actionServlet.getInitParameter(PARAM_DEPENDENCY_CHECK);
-        return Boolean.valueOf(dependencyCheck).booleanValue();
+        return Boolean.valueOf(dependencyCheck);
     }
 
 }

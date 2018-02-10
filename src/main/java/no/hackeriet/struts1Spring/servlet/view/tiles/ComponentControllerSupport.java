@@ -70,9 +70,7 @@ public abstract class ComponentControllerSupport extends ControllerSupport {
 
         try {
             execute(componentContext, request, response, servletContext);
-        } catch (ServletException ex) {
-            throw ex;
-        } catch (IOException ex) {
+        } catch (ServletException | IOException ex) {
             throw ex;
         } catch (Throwable ex) {
             throw new NestedServletException("Execution of component controller failed", ex);
