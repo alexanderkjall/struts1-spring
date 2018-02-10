@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>no.hackeriet</groupId>
     <artifactId>struts1-spring5</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>1.0.1-SNAPSHOT</version>
     <name>Struts1 Spring5</name>
     <description>Struts1 Spring5 Integration</description>
     <url>https://github.com/alexanderkjall/struts1-spring</url>
